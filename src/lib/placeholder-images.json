@@ -1,0 +1,38 @@
+[
+  {
+    "id": "hero-background-logistic",
+    "description": "A modern warehouse with blurred motion of workers and forklifts, conveying activity and efficiency.",
+    "imageUrl": "https://picsum.photos/seed/hero-bg/1920/1080",
+    "imageHint": "warehouse logistics"
+  },
+  {
+    "id": "avatar-1",
+    "description": "Professional headshot of a smiling man in business attire.",
+    "imageUrl": "https://picsum.photos/seed/avatar-1/200/200",
+    "imageHint": "person portrait"
+  },
+  {
+    "id": "avatar-2",
+    "description": "Professional headshot of a smiling woman against a modern background.",
+    "imageUrl": "https://picsum.photos/seed/avatar-2/200/200",
+    "imageHint": "person portrait"
+  },
+  {
+    "id": "avatar-3",
+    "description": "Candid portrait of a professional man in an office environment.",
+    "imageUrl": "https://picsum.photos/seed/avatar-3/200/200",
+    "imageHint": "person office"
+  },
+  {
+    "id": "about-map",
+    "description": "A glowing, holographic world map projection with a green hue.",
+    "imageUrl": "https://picsum.photos/seed/about-map/800/600",
+    "imageHint": "world map"
+  },
+  {
+    "id": "service-international",
+    "description": "A cargo plane flying over a map of the world.",
+    "imageUrl": "https://picsum.photos/seed/international/800/600",
+    "imageHint": "plane logistics"
+  }
+]
