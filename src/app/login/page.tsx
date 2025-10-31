@@ -2,7 +2,6 @@
 
 import { useActionState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { handleSignIn } from '@/app/auth/actions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,7 +23,6 @@ function SubmitButton() {
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState(handleSignIn, undefined);
-  const router = useRouter();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -33,10 +31,10 @@ export default function LoginPage() {
         title: "Login Successful!",
         description: "Redirecting you to the homepage.",
       });
-      // A hard refresh is more reliable for ensuring the auth state is synced.
+      // A hard refresh is the most reliable way to ensure the auth state is synced.
       window.location.href = '/';
     }
-  }, [state, router, toast]);
+  }, [state, toast]);
 
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] py-12 px-4">

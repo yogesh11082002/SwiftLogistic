@@ -1,18 +1,20 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
-import type { AuthSession } from '@supabase/supabase-js';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import type { AuthSession, SupabaseClient } from '@supabase/supabase-js';
+import { Loader2 } from 'lucide-react';
 
 type AuthContextType = {
   user: AuthSession['user'] | null;
   session: AuthSession | null;
-  isLoading: boolean;
+  supabase: SupabaseClient;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const supabase = createClientComponentClient();
   const [session, setSession] = useState<AuthSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,13 +37,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
 
   const value = {
     session,
     user: session?.user ?? null,
-    isLoading,
+    supabase,
   };
+  
+  if (isLoading) {
+    return (
+        <div className="flex items-center justify-center h-screen">
+            <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+    )
+  }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
