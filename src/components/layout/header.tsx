@@ -23,6 +23,7 @@ export default function Header() {
   // Get session on mount
   useEffect(() => {
     const getSession = async () => {
+      setIsLoading(true);
       const { data: { session } } = await supabase.auth.getSession()
       setSession(session)
       setIsLoading(false);
