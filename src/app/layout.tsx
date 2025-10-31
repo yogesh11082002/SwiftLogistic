@@ -1,4 +1,3 @@
-import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/providers/theme-provider';
@@ -6,6 +5,9 @@ import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
 import { Inter, Poppins } from 'next/font/google';
 import { AuthProvider } from '@/components/providers/auth-provider';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import type { Metadata } from 'next';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -20,7 +22,6 @@ const poppins = Poppins({
   variable: '--font-headline',
 });
 
-
 export const metadata: Metadata = {
   title: 'SwiftRoute Logistics',
   description: 'Reliable, Fast, Secure. Your Global Logistics Partner.',
@@ -29,11 +30,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // ✅ Fetch session server-side for instant hydration
+  const supabase = createServerComponentClient({ cookies });
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${poppins.variable} font-body antialiased`}>
@@ -43,7 +46,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>
+          <AuthProvider initialSession={session}>
             <div className="flex min-h-screen flex-col bg-background">
               <Header />
               <main className="flex-1">{children}</main>
