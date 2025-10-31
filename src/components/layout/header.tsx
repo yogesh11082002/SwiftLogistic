@@ -57,6 +57,8 @@ export default function Header() {
   };
 
   const mainNavLinks = NAV_LINKS.filter(link => ['Track', 'Services', 'Pricing', 'About', 'Contact'].includes(link.name));
+  const publicNavLinks = NAV_LINKS.filter(link => ['Services', 'Pricing', 'About', 'Contact'].includes(link.name));
+
 
   // While checking session, show a minimal header to prevent layout shifts and incorrect button flashes.
   if (isLoading) {
@@ -152,7 +154,21 @@ export default function Header() {
             ) : (
                 // ❌ Logged Out View
                 <>
-                    <div className="hidden md:flex items-center gap-2">
+                    <nav className="hidden items-center gap-8 md:flex">
+                        {publicNavLinks.map((link) => (
+                            <Link
+                                key={link.name}
+                                href={link.href}
+                                className={cn(
+                                'text-sm font-medium transition-colors hover:text-primary',
+                                pathname === link.href ? 'text-primary' : 'text-muted-foreground'
+                                )}
+                            >
+                                {link.name}
+                            </Link>
+                        ))}
+                    </nav>
+                    <div className="flex items-center gap-2">
                         <Button asChild variant="ghost" className="rounded-full">
                             <Link href="/login">Login</Link>
                         </Button>
@@ -176,10 +192,26 @@ export default function Header() {
                                 </Link>
                             </div>
                             <nav className="flex-1 p-4">
-                                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className={cn('block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground', pathname === '/login' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground')}>Login</Link>
-                                <Link href="/signup" onClick={() => setMobileMenuOpen(false)} className={cn('block mt-2 rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground', pathname === '/signup' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground')}>Sign Up</Link>
+                                {publicNavLinks.map((link) => (
+                                    <Link
+                                        key={link.name}
+                                        href={link.href}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className={cn(
+                                        'block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
+                                        pathname === link.href ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
+                                        )}
+                                    >
+                                        {link.name}
+                                    </Link>
+                                ))}
                             </nav>
-                            <div className="border-t p-4">
+                            <div className="border-t p-4 flex flex-col gap-2">
+                                <Button asChild className="w-full rounded-full" variant="outline">
+                                    <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                                        Login
+                                    </Link>
+                                </Button>
                                 <Button asChild className="w-full rounded-full">
                                     <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
                                         Sign Up
