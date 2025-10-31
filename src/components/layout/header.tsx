@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useEffect, useState } from "react"
@@ -60,7 +61,6 @@ export default function Header() {
   const publicNavLinks = NAV_LINKS.filter(link => ['Services', 'Pricing', 'About', 'Contact'].includes(link.name));
 
 
-  // While checking session, show a minimal header to prevent layout shifts and incorrect button flashes.
   if (isLoading) {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
@@ -228,3 +228,5 @@ export default function Header() {
     </header>
   )
 }
+
+    
