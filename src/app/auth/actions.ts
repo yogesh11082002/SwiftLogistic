@@ -80,5 +80,3 @@ export async function handleSignOut() {
   await supabase.auth.signOut();
   redirect('/login');
 }
-
-    

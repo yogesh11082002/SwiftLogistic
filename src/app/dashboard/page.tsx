@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useAuth } from '@/hooks/use-auth';
@@ -5,14 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, LogOut } from 'lucide-react';
+import { handleSignOut } from '@/app/auth/actions';
 
 export default function DashboardPage() {
-  const { user, supabase } = useAuth();
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.href = '/';
-  };
+  const { user } = useAuth();
 
   return (
     <div className="container mx-auto px-4 py-12 md:py-24">
@@ -47,10 +44,12 @@ export default function DashboardPage() {
                     </Link>
                 </Button>
                  <div className="sm:col-span-2">
-                    <Button onClick={handleLogout} size="lg" variant="destructive" className="w-full justify-between rounded-lg">
-                        Logout
-                        <LogOut className="h-4 w-4" />
-                    </Button>
+                    <form action={handleSignOut} className="w-full">
+                        <Button type="submit" size="lg" variant="destructive" className="w-full justify-between rounded-lg">
+                            Logout
+                            <LogOut className="h-4 w-4" />
+                        </Button>
+                    </form>
                 </div>
             </CardContent>
         </Card>
