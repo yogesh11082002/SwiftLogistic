@@ -6,7 +6,7 @@ export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
   const supabase = createMiddlewareClient({ req, res })
 
-  await supabase.auth.getSession() // this restores session cookies
+  await supabase.auth.getSession() // this restores session cookie
   return res
 }
 
