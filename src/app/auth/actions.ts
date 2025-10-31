@@ -32,7 +32,10 @@ export async function handleSignIn(prevState: any, formData: FormData) {
     return { error: error.message };
   }
 
-  redirect('/');
+  // Instead of redirecting here, we'll return a success state
+  // to be handled by the client component. This gives the client
+  // time to process the auth state change.
+  return { success: true };
 }
 
 export async function handleSignUp(prevState: any, formData: FormData) {

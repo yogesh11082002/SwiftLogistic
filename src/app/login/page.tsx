@@ -1,7 +1,8 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { handleSignIn } from '@/app/auth/actions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { useFormStatus } from 'react-dom';
+import { useToast } from '@/hooks/use-toast';
 
 function SubmitButton() {
     const { pending } = useFormStatus();
@@ -22,6 +24,20 @@ function SubmitButton() {
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState(handleSignIn, undefined);
+  const router = useRouter();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (state?.success) {
+      toast({
+        title: "Login Successful!",
+        description: "Redirecting you to the homepage.",
+      });
+      // Redirect to home page after successful login
+      router.push('/');
+      router.refresh(); // Force a refresh to update the header state
+    }
+  }, [state, router, toast]);
 
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] py-12 px-4">
