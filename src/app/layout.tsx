@@ -1,13 +1,11 @@
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/providers/theme-provider';
-import Header from '@/components/layout/header';
-import Footer from '@/components/layout/footer';
-import { Inter, Poppins } from 'next/font/google';
 import { AuthProvider } from '@/components/providers/auth-provider';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
+import { Inter, Poppins } from 'next/font/google';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -31,7 +29,6 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // ✅ Fetch session server-side for instant hydration
   const supabase = createServerComponentClient({ cookies });
   const {
     data: { session },
@@ -47,11 +44,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           disableTransitionOnChange
         >
           <AuthProvider initialSession={session}>
-            <div className="flex min-h-screen flex-col bg-background">
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
+            {children}
             <Toaster />
           </AuthProvider>
         </ThemeProvider>
