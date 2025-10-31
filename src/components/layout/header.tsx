@@ -27,6 +27,7 @@ export default function Header() {
 
     async function fetchSession() {
       try {
+        // Use client-side getSession to ensure we have the latest auth state
         const { data } = await supabase.auth.getSession();
         if (active) {
           setSession(data.session ?? null);
@@ -54,13 +55,17 @@ export default function Header() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    window.location.href = '/'; // Full reload for safety
+    // A hard refresh is the most reliable way to reset state after logout
+    window.location.href = '/'; 
   };
+  
+  const protectedLinks = NAV_LINKS.filter(link => ['Track', 'Pricing', 'Optimize Route'].includes(link.name));
+  const publicLinks = NAV_LINKS.filter(link => !['Track', 'Pricing', 'Optimize Route', 'Login', 'Sign Up'].includes(link.name));
+  const mobileNavLinks = [...publicLinks, ...protectedLinks];
+  const desktopNavLinks = [...publicLinks, ...protectedLinks.filter(l => l.name !== 'Optimize Route')];
 
-  const mainNavLinks = NAV_LINKS.filter(link => ['Track', 'Services', 'Pricing', 'About', 'Contact'].includes(link.name));
-  const publicNavLinks = NAV_LINKS.filter(link => ['Services', 'Pricing', 'About', 'Contact'].includes(link.name));
 
-
+  // This is the crucial part: render a loading state or a minimal header until the session is confirmed client-side
   if (isLoading) {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
@@ -92,7 +97,7 @@ export default function Header() {
                 // ✅ Logged In View
                 <>
                 <nav className="hidden items-center gap-8 md:flex">
-                {mainNavLinks.map((link) => (
+                {desktopNavLinks.map((link) => (
                     <Link
                     key={link.name}
                     href={link.href}
@@ -104,6 +109,13 @@ export default function Header() {
                     {link.name}
                     </Link>
                 ))}
+                 <Link
+                    key="optimize-route"
+                    href="/optimize-route"
+                    className='text-sm font-medium transition-colors hover:text-primary text-muted-foreground'
+                    >
+                    AI Optimizer
+                    </Link>
                 </nav>
                 <div className="flex items-center gap-2">
                     <Button onClick={handleLogout} variant="outline" className="hidden md:inline-flex rounded-full">
@@ -126,7 +138,7 @@ export default function Header() {
                                 </Link>
                             </div>
                             <nav className="flex flex-1 flex-col gap-4 p-4">
-                            {mainNavLinks.map((link) => (
+                            {mobileNavLinks.map((link) => (
                                 <Link
                                     key={link.name}
                                     href={link.href}
@@ -139,6 +151,17 @@ export default function Header() {
                                     {link.name}
                                 </Link>
                             ))}
+                               <Link
+                                    key="optimize-route"
+                                    href="/optimize-route"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className={cn(
+                                    'rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
+                                    pathname === "/optimize-route" ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
+                                    )}
+                                >
+                                    AI Optimizer
+                                </Link>
                             </nav>
                             <div className="border-t p-4">
                                 <Button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="w-full rounded-full">
@@ -155,7 +178,7 @@ export default function Header() {
                 // ❌ Logged Out View
                 <>
                     <nav className="hidden items-center gap-8 md:flex">
-                        {publicNavLinks.map((link) => (
+                        {publicLinks.map((link) => (
                             <Link
                                 key={link.name}
                                 href={link.href}
@@ -169,12 +192,14 @@ export default function Header() {
                         ))}
                     </nav>
                     <div className="flex items-center gap-2">
-                        <Button asChild variant="ghost" className="rounded-full">
-                            <Link href="/login">Login</Link>
-                        </Button>
-                        <Button asChild className="rounded-full">
-                            <Link href="/signup">Sign Up</Link>
-                        </Button>
+                         <div className="hidden md:flex items-center gap-2">
+                            <Button asChild variant="ghost" className="rounded-full">
+                                <Link href="/login">Login</Link>
+                            </Button>
+                            <Button asChild className="rounded-full">
+                                <Link href="/signup">Sign Up</Link>
+                            </Button>
+                        </div>
                     </div>
                     <div className="md:hidden">
                         <Sheet open={isMobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -192,7 +217,7 @@ export default function Header() {
                                 </Link>
                             </div>
                             <nav className="flex-1 p-4">
-                                {publicNavLinks.map((link) => (
+                                {publicLinks.map((link) => (
                                     <Link
                                         key={link.name}
                                         href={link.href}
