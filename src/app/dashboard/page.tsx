@@ -4,10 +4,15 @@ import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, LogOut } from 'lucide-react';
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, supabase } = useAuth();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/';
+  };
 
   return (
     <div className="container mx-auto px-4 py-12 md:py-24">
@@ -26,7 +31,7 @@ export default function DashboardPage() {
         <Card className="shadow-2xl rounded-xl bg-secondary/30 border-border/50">
             <CardHeader>
                 <CardTitle className="font-headline text-2xl">Quick Actions</CardTitle>
-                <CardDescription>Get started with our most popular features.</CardDescription>
+                <CardDescription>Manage your account and shipments.</CardDescription>
             </CardHeader>
             <CardContent className="grid sm:grid-cols-2 gap-4">
                 <Button asChild size="lg" className="w-full justify-between rounded-lg">
@@ -41,6 +46,12 @@ export default function DashboardPage() {
                         <ArrowRight className="h-4 w-4" />
                     </Link>
                 </Button>
+                 <div className="sm:col-span-2">
+                    <Button onClick={handleLogout} size="lg" variant="destructive" className="w-full justify-between rounded-lg">
+                        Logout
+                        <LogOut className="h-4 w-4" />
+                    </Button>
+                </div>
             </CardContent>
         </Card>
       </div>
