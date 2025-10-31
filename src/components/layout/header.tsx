@@ -29,16 +29,19 @@ export default function Header() {
 
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      if (_event === 'SIGNED_IN' || _event === 'SIGNED_OUT') {
+        router.refresh();
+      }
     });
 
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, [supabase, router]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.refresh();
+    router.push('/');
   };
 
   const mainNavLinks = NAV_LINKS.filter(link => ['Track', 'Services', 'Pricing', 'About', 'Contact'].includes(link.name));
@@ -128,7 +131,7 @@ export default function Header() {
                 </nav>
                 <div className="border-t p-4">
                   {session ? (
-                      <Button onClick={handleLogout} className="w-full rounded-full">
+                      <Button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="w-full rounded-full">
                          <LogOut className="mr-2 h-4 w-4" />
                          Logout
                       </Button>
