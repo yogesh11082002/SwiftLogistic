@@ -9,6 +9,7 @@ type AuthContextType = {
   user: Session['user'] | null;
   session: Session | null;
   supabase: SupabaseClient;
+  isLoading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -54,8 +55,15 @@ export function AuthProvider({
     );
   }
 
+  const value = {
+    session,
+    user: session?.user ?? null,
+    supabase,
+    isLoading,
+  };
+
   return (
-    <AuthContext.Provider value={{ session, user: session?.user ?? null, supabase }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
