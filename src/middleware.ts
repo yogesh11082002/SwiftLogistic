@@ -16,6 +16,12 @@ export async function middleware(req: NextRequest) {
     url.pathname = '/login';
     return NextResponse.redirect(url);
   }
+  
+  if (session && (pathname === '/login' || pathname === '/signup')) {
+    const url = new URL(req.url);
+    url.pathname = '/dashboard';
+    return NextResponse.redirect(url);
+  }
 
   return res
 }
