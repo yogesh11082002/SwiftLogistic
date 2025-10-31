@@ -58,7 +58,7 @@ export default function Header() {
 
   const mainNavLinks = NAV_LINKS.filter(link => ['Track', 'Services', 'Pricing', 'About', 'Contact'].includes(link.name));
 
-  // While checking session, show a minimal header to prevent layout shifts.
+  // While checking session, show a minimal header to prevent layout shifts and incorrect button flashes.
   if (isLoading) {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
