@@ -7,16 +7,13 @@ export async function middleware(req: NextRequest) {
   const supabase = createMiddlewareClient({ req, res })
 
   // Refresh session if expired - this will refresh the session cookie
-  await supabase.auth.getSession()
-
   const { data: { session } } = await supabase.auth.getSession()
 
-  const protectedRoutes = ['/track', '/pricing', '/optimize-route', '/dashboard'];
   const { pathname } = req.nextUrl;
 
   // If the user is not logged in and is trying to access a protected route,
   // redirect them to the login page.
-  if (!session && protectedRoutes.includes(pathname)) {
+  if (!session && (pathname === '/dashboard' || pathname === '/track' || pathname === '/pricing' || pathname === '/optimize-route')) {
     const url = new URL(req.url);
     url.pathname = '/login';
     return NextResponse.redirect(url);
@@ -36,13 +33,11 @@ export async function middleware(req: NextRequest) {
 // Ensure the middleware is only called for relevant paths.
 export const config = {
     matcher: [
-      /*
-       * Match all request paths except for the ones starting with:
-       * - _next/static (static files)
-       * - _next/image (image optimization files)
-       * - favicon.ico (favicon file)
-       * - auth/callback (Supabase auth callback)
-       */
-      '/((?!_next/static|_next/image|favicon.ico|auth/callback).*)',
+      '/dashboard',
+      '/track',
+      '/pricing',
+      '/optimize-route',
+      '/login',
+      '/signup'
     ],
   }
