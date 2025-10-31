@@ -10,6 +10,7 @@ import { NAV_LINKS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import Logo from "./logo";
+import { handleSignOut } from "@/app/auth/actions";
 
 function MobileMenu({ links, onLogout, open, onOpenChange }: any) {
   const pathname = usePathname();
@@ -50,16 +51,16 @@ function MobileMenu({ links, onLogout, open, onOpenChange }: any) {
 
           {isLoggedIn ? (
             <div className="border-t p-4">
-              <Button
-                onClick={() => {
-                  if (onLogout) onLogout();
-                  onOpenChange(false);
-                }}
-                className="w-full rounded-full"
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Logout
-              </Button>
+                 <form action={handleSignOut}>
+                    <Button
+                        type="submit"
+                        className="w-full rounded-full"
+                        onClick={() => onOpenChange(false)}
+                    >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                    </Button>
+                </form>
             </div>
           ) : (
             <div className="border-t p-4 flex flex-col gap-2">
@@ -83,25 +84,18 @@ function MobileMenu({ links, onLogout, open, onOpenChange }: any) {
 }
 
 export default function Header() {
-  const { session, supabase, isLoading } = useAuth();
+  const { session, isLoading } = useAuth();
   const pathname = usePathname();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.reload(); // ✅ Hard refresh ensures fresh state
-  };
-
-  const protectedLinks = NAV_LINKS.filter(link =>
-    ["Track", "Pricing", "Dashboard"].includes(link.name)
+  const loggedInLinks = NAV_LINKS.filter(
+    link => !['Login', 'Sign Up'].includes(link.name)
   );
-  const publicLinks = NAV_LINKS.filter(
-    link =>
-      !["Track", "Pricing", "Dashboard", "Login", "Sign Up", "Optimize Route"].includes(link.name)
+  
+  const loggedOutLinks = NAV_LINKS.filter(
+      link => !['Dashboard', 'Track', 'Pricing', 'Optimize Route'].includes(link.name)
   );
-  const loggedInLinks = [...publicLinks, ...protectedLinks.filter(l => l.name !== "Dashboard")];
 
-  // ✅ Don’t render anything until auth is loaded
   if (isLoading) {
     return (
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
@@ -112,7 +106,7 @@ export default function Header() {
                     SwiftRoute
                 </span>
             </Link>
-            <p className="text-sm text-muted-foreground">Loading session...</p>
+            <div className="h-6 w-24 rounded-md animate-pulse bg-muted"></div>
         </div>
       </header>
     );
@@ -133,18 +127,20 @@ export default function Header() {
             <>
               <nav className="hidden md:flex items-center gap-8">
                 {loggedInLinks.map(link => (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    className={cn(
-                      "text-sm font-medium transition-colors hover:text-primary",
-                      pathname === link.href ? "text-primary" : "text-muted-foreground"
-                    )}
-                  >
-                    {link.name}
-                  </Link>
+                    link.name !== 'Dashboard' && (
+                        <Link
+                            key={link.name}
+                            href={link.href}
+                            className={cn(
+                            "text-sm font-medium transition-colors hover:text-primary",
+                            pathname === link.href ? "text-primary" : "text-muted-foreground"
+                            )}
+                        >
+                            {link.name}
+                        </Link>
+                    )
                 ))}
-                <Button asChild variant="outline" className="rounded-full bg-primary/10">
+                 <Button asChild variant="outline" className="rounded-full bg-primary/10">
                   <Link href="/dashboard">
                     <LayoutDashboard className="mr-2 h-4 w-4" />
                     Dashboard
@@ -152,19 +148,22 @@ export default function Header() {
                 </Button>
               </nav>
 
-              <Button
-                onClick={handleLogout}
-                variant="outline"
-                className="hidden md:inline-flex rounded-full"
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Logout
-              </Button>
+              <form action={handleSignOut} className="hidden md:flex">
+                <Button
+                    type="submit"
+                    variant="outline"
+                    className="rounded-full"
+                >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                </Button>
+              </form>
             </>
           ) : (
             <>
               <nav className="hidden md:flex items-center gap-8">
-                {publicLinks.map(link => (
+                {loggedOutLinks.map(link => (
+                  (link.name !== 'Login' && link.name !== 'Sign Up') &&
                   <Link
                     key={link.name}
                     href={link.href}
@@ -190,8 +189,8 @@ export default function Header() {
           )}
 
           <MobileMenu
-            links={session ? [...loggedInLinks, { name: "Dashboard", href: "/dashboard" }] : publicLinks}
-            onLogout={session ? handleLogout : undefined}
+            links={session ? loggedInLinks : loggedOutLinks}
+            onLogout={session ? handleSignOut : undefined}
             open={isMobileMenuOpen}
             onOpenChange={setMobileMenuOpen}
           />
