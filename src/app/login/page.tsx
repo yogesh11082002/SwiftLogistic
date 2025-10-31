@@ -33,9 +33,10 @@ export default function LoginPage() {
         title: "Login Successful!",
         description: "Redirecting you to the homepage.",
       });
-      // Redirect to home page after successful login
+      // Redirect to home page and then force a full refresh.
+      // This ensures the auth provider and header re-evaluate the new session.
       router.push('/');
-      router.refresh(); // Force a refresh to update the header state
+      router.refresh();
     }
   }, [state, router, toast]);
 
