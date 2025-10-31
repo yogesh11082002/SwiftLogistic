@@ -7,7 +7,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import type { Session } from '@supabase/supabase-js';
 import Logo from './logo';
 import { Button } from '@/components/ui/button';
-import { Menu, LogOut, Loader2 } from 'lucide-react';
+import { Menu, LogOut, Loader2, Zap } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -110,16 +110,19 @@ export default function Header() {
                     {link.name}
                     </Link>
                 ))}
-                 <Link
-                    key="optimize-route"
-                    href="/optimize-route"
-                    className={cn(
-                        'text-sm font-medium transition-colors hover:text-primary bg-primary/10 px-3 py-2 rounded-full',
-                        pathname === '/optimize-route' ? 'text-primary' : 'text-muted-foreground'
-                    )}
-                    >
-                    AI Optimizer
+                 <Button asChild variant="outline" className="rounded-full bg-primary/10">
+                    <Link
+                        key="optimize-route"
+                        href="/optimize-route"
+                        className={cn(
+                            'text-sm font-medium transition-colors hover:text-primary',
+                            pathname === '/optimize-route' ? 'text-primary' : 'text-muted-foreground'
+                        )}
+                        >
+                        <Zap className="mr-2 h-4 w-4"/>
+                        AI Optimizer
                     </Link>
+                </Button>
                 </nav>
                 <div className="flex items-center gap-2">
                     <Button onClick={handleLogout} variant="outline" className="hidden md:inline-flex rounded-full">
@@ -253,3 +256,5 @@ export default function Header() {
     </header>
   )
 }
+
+    
