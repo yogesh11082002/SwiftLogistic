@@ -1,31 +1,50 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Menu, LogOut } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import type { Session } from '@supabase/supabase-js';
 
 import { NAV_LINKS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Logo from './logo';
-import { useAuth } from '@/hooks/use-auth';
-import { handleSignOut } from '@/app/auth/actions';
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user } = useAuth();
+  const [session, setSession] = useState<Session | null>(null);
+  const supabase = createClientComponentClient();
+
+  useEffect(() => {
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
+    };
+    getSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, [supabase]);
 
   const handleLogout = async () => {
-    await handleSignOut();
+    await supabase.auth.signOut();
+    // We redirect to login and refresh to ensure all state is cleared.
+    router.push('/login');
+    router.refresh();
   };
 
   const mainNavLinks = NAV_LINKS.filter(link => ['Track', 'Services', 'Pricing', 'About', 'Contact'].includes(link.name));
-  const authNavLinks = NAV_LINKS.filter(link => ['Login', 'Sign Up'].includes(link.name));
-
-
+  
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
       <div className="container mx-auto flex h-20 items-center justify-between px-4">
@@ -37,7 +56,7 @@ export default function Header() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          {user && (
+          {session && (
             <>
               {mainNavLinks.map((link) => (
                 <Link
@@ -56,7 +75,7 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          {user ? (
+          {session ? (
              <Button onClick={handleLogout} variant="outline" className="hidden md:inline-flex rounded-full">
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
@@ -88,7 +107,7 @@ export default function Header() {
                     </Link>
                 </div>
                 <nav className="flex flex-1 flex-col gap-4 p-4">
-                  {user ? (
+                  {session ? (
                       mainNavLinks.map((link) => (
                           <Link
                               key={link.name}
@@ -104,24 +123,13 @@ export default function Header() {
                       ))
                   ) : (
                       <>
-                          {authNavLinks.map((link) => (
-                              <Link
-                                  key={link.name}
-                                  href={link.href}
-                                  onClick={() => setMobileMenuOpen(false)}
-                                  className={cn(
-                                  'rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
-                                  pathname === link.href ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
-                                  )}
-                              >
-                                  {link.name}
-                              </Link>
-                          ))}
+                        <Link href="/login" onClick={() => setMobileMenuOpen(false)} className={cn('rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground', pathname === '/login' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground')}>Login</Link>
+                        <Link href="/signup" onClick={() => setMobileMenuOpen(false)} className={cn('rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground', pathname === '/signup' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground')}>Sign Up</Link>
                       </>
                   )}
                 </nav>
                 <div className="border-t p-4">
-                  {user ? (
+                  {session ? (
                       <Button onClick={handleLogout} className="w-full rounded-full">
                          <LogOut className="mr-2 h-4 w-4" />
                          Logout
