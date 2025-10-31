@@ -140,12 +140,14 @@ export default function Header() {
                         </Link>
                     )
                 ))}
-                 <Button asChild variant="outline" className="rounded-full bg-primary/10">
-                  <Link href="/dashboard">
-                    <LayoutDashboard className="mr-2 h-4 w-4" />
-                    Dashboard
-                  </Link>
-                </Button>
+                 {pathname !== '/dashboard' && (
+                    <Button asChild variant="outline" className="rounded-full bg-primary/10">
+                    <Link href="/dashboard">
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        Dashboard
+                    </Link>
+                    </Button>
+                 )}
               </nav>
 
               <form action={handleSignOut} className="hidden md:flex">

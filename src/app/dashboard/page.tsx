@@ -43,14 +43,6 @@ export default function DashboardPage() {
                         <ArrowRight className="h-4 w-4" />
                     </Link>
                 </Button>
-                 <div className="sm:col-span-2">
-                    <form action={handleSignOut} className="w-full">
-                        <Button type="submit" size="lg" variant="destructive" className="w-full justify-between rounded-lg">
-                            Logout
-                            <LogOut className="h-4 w-4" />
-                        </Button>
-                    </form>
-                </div>
             </CardContent>
         </Card>
       </div>
