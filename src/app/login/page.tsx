@@ -32,7 +32,7 @@ export default function LoginPage() {
         title: "Login Successful!",
         description: "Redirecting you to the homepage.",
       });
-      // A hard refresh is the most reliable way to ensure the auth state is synced.
+      // A hard refresh is the most reliable way to ensure the auth state is synced across the app.
       window.location.href = '/';
     }
   }, [state, toast]);
@@ -74,5 +74,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    
