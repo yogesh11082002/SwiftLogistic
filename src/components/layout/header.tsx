@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/providers/auth-provider";
-import { LogOut, Menu, Zap } from "lucide-react";
+import { LogOut, Menu, Zap, LayoutDashboard } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 import { NAV_LINKS } from "@/lib/constants";
@@ -44,18 +44,6 @@ function MobileMenu({ links, onLogout, open, onOpenChange }: any) {
                 {link.name}
               </Link>
             ))}
-             {isLoggedIn && (
-                <Link
-                    href="/optimize-route"
-                    onClick={() => onOpenChange(false)}
-                    className={cn(
-                        'rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
-                        pathname === "/optimize-route" ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
-                    )}
-                >
-                    AI Optimizer
-                </Link>
-             )}
           </nav>
           {isLoggedIn ? (
             <div className="border-t p-4">
@@ -92,13 +80,13 @@ export default function Header() {
   };
 
   const protectedLinks = NAV_LINKS.filter(link =>
-    ["Track", "Pricing"].includes(link.name)
+    ["Track", "Pricing", "Dashboard"].includes(link.name)
   );
   const publicLinks = NAV_LINKS.filter(
-    link => !["Track", "Pricing", "Optimize Route", "Login", "Sign Up"].includes(link.name)
+    link => !["Track", "Pricing", "Dashboard", "Login", "Sign Up", "Optimize Route"].includes(link.name)
   );
   
-  const loggedInLinks = [...publicLinks, ...protectedLinks];
+  const loggedInLinks = [...publicLinks, ...protectedLinks.filter(l => l.name !== 'Dashboard')];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
@@ -128,9 +116,9 @@ export default function Header() {
                   </Link>
                 ))}
                 <Button asChild variant="outline" className="rounded-full bg-primary/10">
-                  <Link href="/optimize-route">
-                    <Zap className="mr-2 h-4 w-4" />
-                    AI Optimizer
+                  <Link href="/dashboard">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Dashboard
                   </Link>
                 </Button>
               </nav>
@@ -167,7 +155,7 @@ export default function Header() {
             </>
           )}
            <MobileMenu
-              links={session ? loggedInLinks : publicLinks}
+              links={session ? [...loggedInLinks, {name: "Dashboard", href: "/dashboard"}] : publicLinks}
               onLogout={session ? handleLogout : undefined}
               open={isMobileMenuOpen}
               onOpenChange={setMobileMenuOpen}

@@ -30,10 +30,10 @@ export default function LoginPage() {
     if (state?.success) {
       toast({
         title: "Login Successful!",
-        description: "Redirecting you to the homepage.",
+        description: "Redirecting you to the dashboard.",
       });
       // A hard refresh is the most reliable way to ensure the auth state is synced across the app.
-      window.location.href = '/';
+      window.location.href = '/dashboard';
     }
   }, [state, toast]);
 
