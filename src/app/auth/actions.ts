@@ -1,3 +1,4 @@
+
 'use server';
 
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
@@ -79,3 +80,5 @@ export async function handleSignOut() {
   await supabase.auth.signOut();
   redirect('/login');
 }
+
+    
