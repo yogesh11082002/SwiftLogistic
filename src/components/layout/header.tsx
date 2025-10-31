@@ -22,7 +22,7 @@ export default function Header() {
     await handleSignOut();
   };
 
-  const mainNavLinks = NAV_LINKS.filter(link => !['Login', 'Sign Up', 'Home'].includes(link.name));
+  const mainNavLinks = NAV_LINKS.filter(link => ['Track', 'Services', 'Pricing', 'About', 'Contact'].includes(link.name));
   const authNavLinks = NAV_LINKS.filter(link => ['Login', 'Sign Up'].includes(link.name));
 
   return (
