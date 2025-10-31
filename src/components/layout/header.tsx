@@ -16,38 +16,64 @@ import { NAV_LINKS } from "@/lib/constants";
 export default function Header() {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const supabase = createClientComponentClient();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  const supabase = createClientComponentClient();
   const pathname = usePathname();
 
-  // Get session on mount
   useEffect(() => {
-    const getSession = async () => {
-      setIsLoading(true);
-      const { data: { session } } = await supabase.auth.getSession()
-      setSession(session)
-      setIsLoading(false);
-    }
-    getSession()
+    let active = true;
 
-    // Listen for login/logout changes
+    async function fetchSession() {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (active) {
+          setSession(data.session ?? null);
+        }
+      } catch (err) {
+        console.error("Error fetching session:", err);
+      } finally {
+        if (active) setIsLoading(false);
+      }
+    }
+
+    fetchSession();
+
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-      setIsLoading(false);
-    })
+      if (active) {
+        setSession(session ?? null);
+      }
+    });
 
     return () => {
-      listener?.subscription.unsubscribe()
-    }
-  }, [supabase])
+      active = false;
+      listener?.subscription?.unsubscribe?.();
+    };
+  }, [supabase]);
 
-  // Handle logout
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    window.location.reload()
-  }
+    await supabase.auth.signOut();
+    window.location.href = '/'; // Full reload for safety
+  };
 
   const mainNavLinks = NAV_LINKS.filter(link => ['Track', 'Services', 'Pricing', 'About', 'Contact'].includes(link.name));
+
+  // While checking session, show a minimal header to prevent layout shifts.
+  if (isLoading) {
+    return (
+        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
+            <div className="container mx-auto flex h-20 items-center justify-between px-4">
+                 <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
+                    <Logo className="h-8 w-8 text-primary" />
+                    <span className="hidden font-headline text-2xl font-bold sm:inline-block">
+                        SwiftRoute
+                    </span>
+                </Link>
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+        </header>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
@@ -60,9 +86,7 @@ export default function Header() {
         </Link>
         
         <div className="flex items-center gap-2">
-            {isLoading ? (
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-            ) : session ? (
+            {session ? (
                 // ✅ Logged In View
                 <>
                 <nav className="hidden items-center gap-8 md:flex">
@@ -168,7 +192,6 @@ export default function Header() {
                 </>
             )}
         </div>
-
       </div>
     </header>
   )
