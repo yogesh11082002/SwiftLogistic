@@ -25,6 +25,7 @@ export default function Header() {
   const mainNavLinks = NAV_LINKS.filter(link => ['Track', 'Services', 'Pricing', 'About', 'Contact'].includes(link.name));
   const authNavLinks = NAV_LINKS.filter(link => ['Login', 'Sign Up'].includes(link.name));
 
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
       <div className="container mx-auto flex h-20 items-center justify-between px-4">
@@ -36,7 +37,7 @@ export default function Header() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          {user ? (
+          {user && (
             <>
               {mainNavLinks.map((link) => (
                 <Link
@@ -51,8 +52,6 @@ export default function Header() {
                 </Link>
               ))}
             </>
-          ) : (
-            <div/>
           )}
         </nav>
 
