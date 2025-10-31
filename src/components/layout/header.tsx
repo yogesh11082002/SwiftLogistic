@@ -61,8 +61,9 @@ export default function Header() {
   
   const protectedLinks = NAV_LINKS.filter(link => ['Track', 'Pricing', 'Optimize Route'].includes(link.name));
   const publicLinks = NAV_LINKS.filter(link => !['Track', 'Pricing', 'Optimize Route', 'Login', 'Sign Up'].includes(link.name));
-  const mobileNavLinks = [...publicLinks, ...protectedLinks];
-  const desktopNavLinks = [...publicLinks, ...protectedLinks.filter(l => l.name !== 'Optimize Route')];
+  
+  const loggedInMobileNavLinks = [...publicLinks, ...protectedLinks];
+  const loggedInDesktopNavLinks = [...publicLinks, ...protectedLinks.filter(l => l.name !== 'Optimize Route')];
 
 
   // This is the crucial part: render a loading state or a minimal header until the session is confirmed client-side
@@ -97,7 +98,7 @@ export default function Header() {
                 // ✅ Logged In View
                 <>
                 <nav className="hidden items-center gap-8 md:flex">
-                {desktopNavLinks.map((link) => (
+                {loggedInDesktopNavLinks.map((link) => (
                     <Link
                     key={link.name}
                     href={link.href}
@@ -112,7 +113,10 @@ export default function Header() {
                  <Link
                     key="optimize-route"
                     href="/optimize-route"
-                    className='text-sm font-medium transition-colors hover:text-primary text-muted-foreground'
+                    className={cn(
+                        'text-sm font-medium transition-colors hover:text-primary',
+                        pathname === '/optimize-route' ? 'text-primary' : 'text-muted-foreground'
+                    )}
                     >
                     AI Optimizer
                     </Link>
@@ -138,7 +142,7 @@ export default function Header() {
                                 </Link>
                             </div>
                             <nav className="flex flex-1 flex-col gap-4 p-4">
-                            {mobileNavLinks.map((link) => (
+                            {loggedInMobileNavLinks.map((link) => (
                                 <Link
                                     key={link.name}
                                     href={link.href}
@@ -204,15 +208,44 @@ export default function Header() {
                     <div className="md:hidden">
                         <Sheet open={isMobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                         <SheetTrigger asChild>
-                            <div className="flex items-center gap-2">
-                                <Button asChild variant="ghost">
+                           <div className="flex items-center gap-2">
+                             <Button variant="ghost" size="icon">
+                                <Menu className="h-6 w-6" />
+                                <span className="sr-only">Open Menu</span>
+                            </Button>
+                           </div>
+                        </SheetTrigger>
+                        <SheetContent side="left" className="bg-background/95 backdrop-blur-sm p-0 flex flex-col">
+                           <div className="border-b p-4">
+                                <Link href="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+                                    <Logo className="h-8 w-8 text-primary" />
+                                    <span className="font-headline text-xl font-bold">SwiftRoute</span>
+                                </Link>
+                            </div>
+                            <nav className="flex flex-1 flex-col gap-4 p-4">
+                            {publicLinks.map((link) => (
+                                <Link
+                                    key={link.name}
+                                    href={link.href}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className={cn(
+                                    'rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
+                                    pathname === link.href ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
+                                    )}
+                                >
+                                    {link.name}
+                                </Link>
+                            ))}
+                            </nav>
+                            <div className="border-t p-4 flex flex-col gap-2">
+                                <Button asChild className="w-full rounded-full" onClick={() => setMobileMenuOpen(false)}>
                                     <Link href="/login">Login</Link>
                                 </Button>
-                                <Button asChild>
+                                <Button asChild variant="outline" className="w-full rounded-full" onClick={() => setMobileMenuOpen(false)}>
                                     <Link href="/signup">Sign Up</Link>
                                 </Button>
                             </div>
-                        </SheetTrigger>
+                        </SheetContent>
                         </Sheet>
                     </div>
                 </>
@@ -222,3 +255,5 @@ export default function Header() {
     </header>
   )
 }
+
+    
