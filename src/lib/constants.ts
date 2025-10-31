@@ -13,6 +13,8 @@ import {
   Twitter,
   Facebook,
   Linkedin,
+  LogIn,
+  UserPlus
 } from 'lucide-react';
 
 export const NAV_LINKS = [
@@ -22,6 +24,8 @@ export const NAV_LINKS = [
   { name: 'Pricing', href: '/pricing', icon: DollarSign },
   { name: 'About', href: '/about', icon: Info },
   { name: 'Contact', href: '/contact', icon: Mail },
+  { name: 'Login', href: '/login', icon: LogIn },
+  { name: 'Sign Up', href: '/signup', icon: UserPlus },
 ];
 
 export type Service = {
