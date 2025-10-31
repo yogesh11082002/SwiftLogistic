@@ -33,10 +33,8 @@ export default function LoginPage() {
         title: "Login Successful!",
         description: "Redirecting you to the homepage.",
       });
-      // Redirect to home page and then force a full refresh.
-      // This ensures the auth provider and header re-evaluate the new session.
-      router.push('/');
-      router.refresh();
+      // A hard refresh is more reliable for ensuring the auth state is synced.
+      window.location.href = '/';
     }
   }, [state, router, toast]);
 

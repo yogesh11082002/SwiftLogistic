@@ -15,10 +15,10 @@ import Logo from './logo';
 
 export default function Header() {
   const pathname = usePathname();
-  const router = useRouter();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
   const supabase = createClientComponentClient();
+  const router = useRouter();
 
   useEffect(() => {
     const getSession = async () => {
@@ -29,7 +29,7 @@ export default function Header() {
 
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      if (_event === 'SIGNED_IN' || _event === 'SIGNED_OUT') {
+      if (_event === 'SIGNED_OUT') {
         router.refresh();
       }
     });
@@ -41,7 +41,8 @@ export default function Header() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push('/');
+    // Use window.location.reload() for a hard refresh to ensure state is cleared everywhere.
+    window.location.href = '/';
   };
 
   const mainNavLinks = NAV_LINKS.filter(link => ['Track', 'Services', 'Pricing', 'About', 'Contact'].includes(link.name));
