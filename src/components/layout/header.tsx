@@ -22,7 +22,7 @@ export default function Header() {
     await handleSignOut();
   };
 
-  const mainNavLinks = NAV_LINKS.filter(link => !['Login', 'Sign Up'].includes(link.name));
+  const mainNavLinks = NAV_LINKS.filter(link => !['Login', 'Sign Up', 'Home'].includes(link.name));
   const authNavLinks = NAV_LINKS.filter(link => ['Login', 'Sign Up'].includes(link.name));
 
   return (
@@ -52,15 +52,7 @@ export default function Header() {
               ))}
             </>
           ) : (
-            <Link
-              href="/"
-              className={cn(
-                'text-sm font-medium transition-colors hover:text-primary',
-                pathname === '/' ? 'text-primary' : 'text-muted-foreground'
-              )}
-            >
-              Home
-            </Link>
+            <div/>
           )}
         </nav>
 
@@ -89,62 +81,59 @@ export default function Header() {
                   <span className="sr-only">Open Menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="bg-background/95 backdrop-blur-sm">
-                <div className="flex flex-col h-full">
-                  <div className="border-b p-4">
+              <SheetContent side="left" className="bg-background/95 backdrop-blur-sm p-0 flex flex-col">
+                <div className="border-b p-4">
                      <Link href="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                         <Logo className="h-8 w-8 text-primary" />
                         <span className="font-headline text-xl font-bold">SwiftRoute</span>
                     </Link>
-                  </div>
-                  <nav className="flex flex-1 flex-col gap-4 p-4">
-                    {user ? (
-                        mainNavLinks.map((link) => (
-                            <Link
-                                key={link.name}
-                                href={link.href}
-                                onClick={() => setMobileMenuOpen(false)}
-                                className={cn(
-                                'rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
-                                pathname === link.href ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
-                                )}
-                            >
-                                {link.name}
-                            </Link>
-                        ))
-                    ) : (
-                        <>
-                            <Link href="/" onClick={() => setMobileMenuOpen(false)} className={cn('rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground', pathname === '/' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground')}>Home</Link>
-                            {authNavLinks.map((link) => (
-                                <Link
-                                    key={link.name}
-                                    href={link.href}
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className={cn(
-                                    'rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
-                                    pathname === link.href ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
-                                    )}
-                                >
-                                    {link.name}
-                                </Link>
-                            ))}
-                        </>
-                    )}
-                  </nav>
-                  <div className="border-t p-4">
-                    {user ? (
-                        <Button onClick={handleLogout} className="w-full rounded-full">
-                           <LogOut className="mr-2 h-4 w-4" />
-                           Logout
-                        </Button>
-                    ) : (
-                         <Button asChild className="w-full rounded-full">
-                            <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
-                                Sign Up
-                            </Link>
-                        </Button>
-                    )}
-                  </div>
+                </div>
+                <nav className="flex flex-1 flex-col gap-4 p-4">
+                  {user ? (
+                      mainNavLinks.map((link) => (
+                          <Link
+                              key={link.name}
+                              href={link.href}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className={cn(
+                              'rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
+                              pathname === link.href ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
+                              )}
+                          >
+                              {link.name}
+                          </Link>
+                      ))
+                  ) : (
+                      <>
+                          {authNavLinks.map((link) => (
+                              <Link
+                                  key={link.name}
+                                  href={link.href}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                  className={cn(
+                                  'rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
+                                  pathname === link.href ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
+                                  )}
+                              >
+                                  {link.name}
+                              </Link>
+                          ))}
+                      </>
+                  )}
+                </nav>
+                <div className="border-t p-4">
+                  {user ? (
+                      <Button onClick={handleLogout} className="w-full rounded-full">
+                         <LogOut className="mr-2 h-4 w-4" />
+                         Logout
+                      </Button>
+                  ) : (
+                       <Button asChild className="w-full rounded-full">
+                          <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
+                              Sign Up
+                          </Link>
+                      </Button>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>
