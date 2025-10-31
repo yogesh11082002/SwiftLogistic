@@ -114,7 +114,7 @@ export default function Header() {
                     key="optimize-route"
                     href="/optimize-route"
                     className={cn(
-                        'text-sm font-medium transition-colors hover:text-primary',
+                        'text-sm font-medium transition-colors hover:text-primary bg-primary/10 px-3 py-2 rounded-full',
                         pathname === '/optimize-route' ? 'text-primary' : 'text-muted-foreground'
                     )}
                     >
@@ -208,12 +208,10 @@ export default function Header() {
                     <div className="md:hidden">
                         <Sheet open={isMobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                         <SheetTrigger asChild>
-                           <div className="flex items-center gap-2">
-                             <Button variant="ghost" size="icon">
-                                <Menu className="h-6 w-6" />
-                                <span className="sr-only">Open Menu</span>
-                            </Button>
-                           </div>
+                           <Button variant="ghost" size="icon">
+                            <Menu className="h-6 w-6" />
+                            <span className="sr-only">Open Menu</span>
+                           </Button>
                         </SheetTrigger>
                         <SheetContent side="left" className="bg-background/95 backdrop-blur-sm p-0 flex flex-col">
                            <div className="border-b p-4">
