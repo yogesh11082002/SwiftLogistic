@@ -38,8 +38,6 @@ export default function Header() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    // We redirect to login and refresh to ensure all state is cleared.
-    router.push('/login');
     router.refresh();
   };
 
